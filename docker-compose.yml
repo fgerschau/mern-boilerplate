@@ -1,0 +1,41 @@
+version: '3'
+services:
+  api:
+    container_name: api
+    restart: always
+    networks:
+      - backbone
+    build:
+      context: ./api
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    networks:
+      - backbone
+    volumes:
+      - ./data:/data/db:delegated
+      - ./backups:/data/backups:delegated
+
+  redis:
+      container_name: redis
+      image: redis
+      networks:
+        - backbone
+  app:
+    container_name: app_nginx
+    restart: always
+    #image: username/apps
+    build: ./
+    networks:
+      - backbone
+    ports:
+      - "80:80"
+      - "443:443"
+    # Uses the certificates from the server
+    volumes:
+      - /data/certs:/etc/nginx/certs
+
+networks:
+  backbone:
+    driver: bridge
