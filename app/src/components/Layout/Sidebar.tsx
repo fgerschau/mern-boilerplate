@@ -1,6 +1,5 @@
 import React, { FC, useCallback } from 'react';
 import {
-  makeStyles,
   useTheme,
   Divider,
   List,
@@ -10,22 +9,25 @@ import {
   ListItemText,
   ListItem,
   SwipeableDrawer,
-} from '@material-ui/core';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+  styled,
+  Toolbar,
+} from '@mui/material';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { DRAWER_WIDTH } from '#/constants';
 import { useUserStore } from '#/store/useStores';
 import { useHistory } from 'react-router-dom';
 import { observer } from 'mobx-react';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
-  drawer: {
-    [theme.breakpoints.up('sm')]: {
-      width: DRAWER_WIDTH,
-      flexShrink: 0,
-    },
+const StyledDrawer = styled('nav')(({ theme }) => ({
+  [theme.breakpoints.up('sm')]: {
+    width: DRAWER_WIDTH,
+    flexShrink: 0,
   },
-  toolbar: theme.mixins.toolbar,
+}));
+
+const useStyles = makeStyles(() => ({
   drawerPaper: {
     width: DRAWER_WIDTH,
   },
@@ -37,9 +39,9 @@ interface Props {
 }
 
 const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
-  const classes = useStyles();
   const theme = useTheme();
   const history = useHistory();
+  const styles = useStyles();
   const userStore = useUserStore();
   const handleLogout = useCallback(() => {
     userStore.logout();
@@ -52,8 +54,8 @@ const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
   };
 
   const drawer = (
-    <div>
-      <div className={classes.toolbar} />
+    <>
+      <Toolbar />
       {userStore.isLoggedIn ? (
         <>
           <Divider />
@@ -89,11 +91,11 @@ const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
           </ListItem>
         )}
       </List>
-    </div>
+    </>
   );
 
   return (
-    <nav className={classes.drawer} aria-label="mailbox folders">
+    <StyledDrawer aria-label="mailbox folders">
       {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
       <Hidden smUp implementation="js">
         <SwipeableDrawer
@@ -103,7 +105,7 @@ const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
           onClose={handleDrawerToggle}
           onOpen={() => handleDrawerToggle()}
           classes={{
-            paper: classes.drawerPaper,
+            paper: styles.drawerPaper,
           }}
           ModalProps={{
             keepMounted: true, // Better open performance on mobile.
@@ -115,7 +117,7 @@ const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
       <Hidden xsDown implementation="js">
         <Drawer
           classes={{
-            paper: classes.drawerPaper,
+            paper: styles.drawerPaper,
           }}
           variant="permanent"
           open
@@ -123,7 +125,7 @@ const Sidebar: FC<Props> = ({ mobileOpen, handleDrawerToggle }) => {
           {drawer}
         </Drawer>
       </Hidden>
-    </nav>
+    </StyledDrawer>
   );
 };
 

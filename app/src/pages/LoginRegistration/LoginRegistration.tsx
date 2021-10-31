@@ -1,29 +1,30 @@
 import React, { FC, useEffect, FormEvent } from 'react';
-import { makeStyles, Button, TextField, Typography } from '@material-ui/core';
+import { Button, TextField, Typography, styled } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import { useLoginForm } from './hooks';
 import { observer } from 'mobx-react';
 import { useUserStore } from '#/store/useStores';
 
-const useStyles = makeStyles((theme) => ({
-  wrapper: {
-    marginTop: theme.spacing(5),
-    display: 'flex',
-    flexWrap: 'wrap',
-    width: '50%',
-  },
-  input: {
-    margin: 'auto',
-    marginBottom: theme.spacing(2),
-    flex: '1 0 100%',
-  },
-  button: {
-    marginBottom: theme.spacing(2),
-    flex: '1 0 100%',
-  },
-  error: {
-    flex: '1 0 100%',
-  },
+const Form = styled('form')(({ theme }) => ({
+  marginTop: theme.spacing(5),
+  display: 'flex',
+  flexWrap: 'wrap',
+  width: '50%',
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  margin: 'auto',
+  marginBottom: theme.spacing(2),
+  flex: '1 0 100%',
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
+  flex: '1 0 100%',
+}));
+
+const ErrorComponent = styled(Typography)(() => ({
+  flex: '1 0 100%',
 }));
 
 interface ILoginRegistrationProps {
@@ -31,7 +32,6 @@ interface ILoginRegistrationProps {
 }
 
 const Login: FC<ILoginRegistrationProps> = ({ login }) => {
-  const styles = useStyles();
   const { email, setEmail, firstName, password, setName, setPassword } = useLoginForm();
 
   const history = useHistory();
@@ -53,53 +53,52 @@ const Login: FC<ILoginRegistrationProps> = ({ login }) => {
   }, [login]);
 
   return (
-    <form onSubmit={handleSubmit} className={styles.wrapper}>
+    <Form onSubmit={handleSubmit}>
       {!login ? (
-        <TextField
+        <StyledTextField
           value={firstName}
           onChange={(e) => setName(e.target.value)}
-          className={styles.input}
           placeholder="Name"
           label="Name"
           type="text"
           error={error?.fields?.firstName}
+          variant="filled"
           required
         />
       ) : null}
-      <TextField
+      <StyledTextField
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className={styles.input}
         placeholder="Email"
         label="Email"
         type="email"
         error={error?.fields?.email}
+        variant="filled"
         required
       />
-      <TextField
+      <StyledTextField
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className={styles.input}
         placeholder="Password"
         label="Password"
         type="password"
         autoComplete="on"
         error={error?.fields?.password}
+        variant="filled"
         required
       />
-      <Button
+      <StyledButton
         disabled={!email || !password}
         variant="contained"
         type="submit"
-        className={styles.button}
         color="primary"
       >
         Submit
-      </Button>
+      </StyledButton>
       {userStore.error?.message ? (
-        <Typography className={styles.error} color="error" variant="body1">
+        <ErrorComponent color="error" variant="body1">
           {userStore.error?.message}
-        </Typography>
+        </ErrorComponent>
       ) : null}
       {
         //!login ? (
@@ -112,7 +111,7 @@ const Login: FC<ILoginRegistrationProps> = ({ login }) => {
         //</Typography>
         //)
       }
-    </form>
+    </Form>
   );
 };
 

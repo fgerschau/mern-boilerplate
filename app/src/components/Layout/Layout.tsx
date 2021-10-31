@@ -1,83 +1,70 @@
-import { Typography, makeStyles, AppBar, Toolbar, IconButton } from '@material-ui/core';
+import { Typography, AppBar, Toolbar, IconButton } from '@mui/material';
 import React, { FC } from 'react';
 import { observer } from 'mobx-react';
 import Sidebar from './Sidebar';
-import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
 import { DRAWER_WIDTH } from '#/constants';
+import { styled } from '@mui/material';
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
+const Root = styled('div')({
+  display: 'flex',
+});
+
+const StyledAppBar = styled(AppBar)(({ theme }) => ({
+  [theme.breakpoints.up('sm')]: {
+    width: `calc(100% - ${DRAWER_WIDTH}px)`,
+    marginLeft: DRAWER_WIDTH,
   },
-  appBar: {
-    [theme.breakpoints.up('sm')]: {
-      width: `calc(100% - ${DRAWER_WIDTH}px)`,
-      marginLeft: DRAWER_WIDTH,
-    },
+}));
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(2),
+  [theme.breakpoints.up('sm')]: {
+    display: 'none',
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-      display: 'none',
-    },
-  },
-  header: {
-    display: 'flex',
-  },
-  title: {
-    marginLeft: 0,
-    marginRight: 'auto',
-  },
-  links: {
-    marginLeft: 'auto',
-    marginRight: '0px',
-    '& > button': {
-      margin: theme.spacing(1),
-    },
-  },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    maxWidth: '100%',
-    overflowX: 'hidden',
-  },
-  toolbar: theme.mixins.toolbar,
+}));
+
+const Header = styled('header')(() => ({
+  display: 'flex',
+}));
+
+const Content = styled('main')(({ theme }) => ({
+  flexGrow: 1,
+  padding: theme.spacing(3),
+  maxWidth: '100%',
+  overflowX: 'hidden',
 }));
 
 const Layout: FC = ({ children }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const styles = useStyles();
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   return (
-    <div className={styles.root}>
-      <AppBar position="fixed" className={styles.appBar}>
+    <Root>
+      <StyledAppBar position="fixed">
         <Toolbar>
-          <IconButton
+          <StyledIconButton
             color="inherit"
             aria-label="open drawer"
             edge="start"
             onClick={handleDrawerToggle}
-            className={styles.menuButton}
           >
             <MenuIcon />
-          </IconButton>
+          </StyledIconButton>
           <Typography variant="h6" noWrap>
             My App
           </Typography>
         </Toolbar>
-      </AppBar>
-      <header className={styles.header}>
-        <div className={styles.links}></div>
-      </header>
+      </StyledAppBar>
+      <Header></Header>
       <Sidebar handleDrawerToggle={handleDrawerToggle} mobileOpen={mobileOpen} />
-      <main className={styles.content}>
-        <div className={styles.toolbar} />
+      <Content>
+        <Toolbar />
         {children}
-      </main>
-    </div>
+      </Content>
+    </Root>
   );
 };
 
