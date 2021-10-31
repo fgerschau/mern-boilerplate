@@ -104,12 +104,12 @@ class UserStore {
       return;
     }
 
-    if (!email || !name || !password) {
+    if (!email || !firstName || !password) {
       this.setError({
         message: 'You need to fill in all required fields.',
         fields: {
           email: !email,
-          name: !name,
+          name: !firstName,
           password: !password,
         },
       });
