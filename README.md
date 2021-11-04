@@ -1,5 +1,11 @@
 # Backend
 
+# Run the whole project with docker
+
+```
+docker-compose up
+```
+
 # Run backend locally
 
 For developement, run the mongo docker and redis container and then run `yarn start` in the `api` folder:
