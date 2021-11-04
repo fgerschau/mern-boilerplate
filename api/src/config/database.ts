@@ -1,3 +1,4 @@
+import { logger } from '@typegoose/typegoose/lib/logSettings';
 import mongoose from 'mongoose';
 import config from './index';
 
@@ -7,6 +8,7 @@ export default (): void => {
     const databaseUrl = config.DATABASE;
     if (!databaseUrl) throw new Error('No database url set!');
 
+    logger.info(`Connecting to database: ${databaseUrl}`);
     mongoose.connect(databaseUrl, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

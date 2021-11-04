@@ -43,13 +43,19 @@ module.exports = () => {
     },
     optimization: {
       minimize: false,
+      nodeEnv: false,
     },
     output: {
       path: path.resolve(__dirname, './dist'),
       publicPath: '/',
       filename: 'main.js',
     },
-    plugins: [new Dotenv({ path: path.resolve(__dirname, './') })],
+    plugins: [
+      new Dotenv({ path: path.resolve(__dirname, './') }),
+      new webpack.DefinePlugin({
+        ENVIRONMENT: 'process.env',
+      }),
+    ],
     node: {
       // Need this when working with express, otherwise the build fails
       __dirname: false, // if you don't put this is, __dirname

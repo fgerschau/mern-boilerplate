@@ -3,14 +3,29 @@ services:
   api:
     container_name: api
     restart: always
+    ports:
+      - "8080:8080"
     networks:
       - backbone
+    environment:
+      - USE_ENV=true
+      - DATABASE=mongodb://mongo:27017/myapp
+      - REDIS_URL=localhost
+      - REDIS_PORT=6379
+      - JWT_SECRET=some_superSecret_secret
+      - JWT_VALID_MIN=120
+      - LOG_LEVEL=info
+    depends_on:
+      - mongo
+      - redis
     build:
       context: ./api
 
   mongo:
     container_name: mongo
     image: mongo
+    ports:
+      - '27017:27017'
     networks:
       - backbone
     volumes:
@@ -25,16 +40,20 @@ services:
   app:
     container_name: app_nginx
     restart: always
-    #image: username/apps
     build: ./
     networks:
       - backbone
     ports:
-      - "80:80"
-      - "443:443"
-    # Uses the certificates from the server
+      - "8000:8000"
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=8000
+    #command: ['cat', '/etc/nginx/nginx.conf']
+    command: /bin/bash -c "/etc/nginx/run_nginx.sh"
+    depends_on:
+      - api
     volumes:
-      - /data/certs:/etc/nginx/certs
+      - ./nginx.conf:/etc/nginx/conf.d/nginx.conf
 
 networks:
   backbone:
